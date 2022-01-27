@@ -1,7 +1,10 @@
 const express = require('express');
 const path = require('path');
 var ejs = require('ejs');
+
+
 const app = express();
+
 
 // const myLogger = (req, res, next) => {
 //   console.log('Middleware log');
