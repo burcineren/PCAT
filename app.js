@@ -29,7 +29,15 @@ app.get('/', (req, res) => {
   //   }
   // res.send(photo);
     // res.sendFile(path.resolve(__dirname, 'temp/index.html'))
-  res.render('index')
+  res.render('index');
+});
+app.get('/about', (req, res) => {
+
+  res.render('about')
+});
+app.get('/add', (req, res) => {
+
+  res.render('add')
 });
 const port = 3000;
 app.listen(port, () => {
