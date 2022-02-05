@@ -42,6 +42,10 @@ app.get('/add', (req, res) => {
 
   res.render('add')
 });
+app.get('/video-page',(req, res) => {
+
+    res.render('video-page')
+});
 const port = 3000;
 app.listen(port, () => {
   console.log(`Sunucu ${port} una baglandi`);
