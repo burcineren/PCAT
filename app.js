@@ -21,6 +21,8 @@ app.set('view engine', 'ejs');
 
 //MIDDLEWARES
 app.use(express.static('public'))
+app.use(express.urlencoded({extend:true})) //url deki datayi okumammizi sagliyor
+app.use(express.json());//url deki datayi json formatina donduruyor.
 // app.use(myLogger);
 // app.use(myLogger2);
 
@@ -45,6 +47,11 @@ app.get('/add', (req, res) => {
 app.get('/video-page',(req, res) => {
 
     res.render('video-page')
+});
+app.post('/photos',(req, res) => { //yonledirneyi yakalayip 
+  //yapmasi gereken islem
+    console.log(req.body); //Forma girilen verileri yazdirmak istiyoruz.
+    res.redirect('/');
 });
 const port = 3000;
 app.listen(port, () => {
