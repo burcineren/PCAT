@@ -70,7 +70,7 @@ app.get('/video-page',(req, res) => {
 app.post('/photos', async (req, res) => { //yonledirneyi yakalayip 
   //yapmasi gereken islem
     // console.log(req.body); //Forma girilen verileri yazdirmak istiyoruz.
-    await Photo.create(req.body) //Ireq.body ilgili modelimize yonlendiyoruz.
+    await Photo.create(req.body); //Ireq.body ilgili modelimize yonlendiyoruz.
     res.redirect('/'); //Anasayfa yonlendiriliyor.
 
 });
