@@ -69,11 +69,23 @@ app.get('/video-page', (req, res) => {
   res.render('video-page');
 });
 app.post('/photos', async (req, res) => {
+  //console.log(req.files.image); //image inputun name i
   //yonledirneyi yakalayip
   //yapmasi gereken islem
   // console.log(req.body); //Forma girilen verileri yazdirmak istiyoruz.
-  await Photo.create(req.body); //Ireq.body ilgili modelimize yonlendiyoruz.
-  res.redirect('/'); //Anasayfa yonlendiriliyor.
+  //await Photo.create(req.body); //Ireq.body ilgili modelimize yonlendiyoruz.
+  // res.redirect('/'); //Anasayfa yonlendiriliyor.
+  
+  let uploadeImage = req.files.image;
+  let uploadPath = __dirname + '/../public/uploads/' + uploadeImage.name;
+
+  uploadeImage.mv(uploadPath, async () => {
+    await Photo.create({
+      ...req.body,
+      image: '/uploads/' + uploadeImage.name,
+    });
+    res.redirect('/');
+  });
 });
 const port = 3000;
 app.listen(port, () => {
