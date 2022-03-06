@@ -81,7 +81,7 @@ app.post('/photos', async (req, res) => {
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
   }
-  
+
   let uploadeImage = req.files.image;
   let uploadPath = __dirname + '/public/uploads/' + uploadeImage.name;
 
@@ -93,6 +93,14 @@ app.post('/photos', async (req, res) => {
     res.redirect('/');
   });
 });
+
+app.get('/photos/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  res.render('edit', {
+    photo,
+  });
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Sunucu ${port} una baglandi`);
