@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
-var ejs = require('ejs');
+const methodOverride = require('method-override');
+const ejs = require('ejs');
 const path = require('path');
 const fs = require('fs');
 const Photo = require('./models/Photo');
@@ -33,6 +34,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true })); //url deki datayi okumammizi sagliyor
 app.use(express.json()); //url deki datayi json formatina donduruyor.4//defoult option
 app.use(fileUpload());
+app.use(methodOverride('_method'));
 // app.use(myLogger);
 // app.use(myLogger2);
 
@@ -94,14 +96,22 @@ app.post('/photos', async (req, res) => {
   });
 });
 
-app.get('/photos/:id', async (req, res) => {
+app.get('/photos/edit/:id', async (req, res) => {
   const photo = await Photo.findOne({ _id: req.params.id });
   res.render('edit', {
     photo,
   });
 });
 
+app.put('/photos/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  photo.title = req.body.title
+  photo.description = req.body.description
+  photo.save()
+
+  res.redirect(`/photos/${req.params.id}`)
+});
 const port = 3000;
 app.listen(port, () => {
-  console.log(`Sunucu ${port} una baglandi`);
+  console.log(`Sunucu ${port} portuna baglandi`);
 });
