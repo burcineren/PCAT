@@ -34,7 +34,11 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true })); //url deki datayi okumammizi sagliyor
 app.use(express.json()); //url deki datayi json formatina donduruyor.4//defoult option
 app.use(fileUpload());
-app.use(methodOverride('_method'));
+app.use(
+  methodOverride('_method', {
+    methods: ['POST', 'GET'],
+  })
+);
 // app.use(myLogger);
 // app.use(myLogger2);
 
@@ -105,11 +109,19 @@ app.get('/photos/edit/:id', async (req, res) => {
 
 app.put('/photos/:id', async (req, res) => {
   const photo = await Photo.findOne({ _id: req.params.id });
-  photo.title = req.body.title
-  photo.description = req.body.description
-  photo.save()
+  photo.title = req.body.title;
+  photo.description = req.body.description;
+  photo.save();
 
-  res.redirect(`/photos/${req.params.id}`)
+  res.redirect(`/photos/${req.params.id}`);
+});
+
+app.delete('/photos/:id', async (req, res) => {
+  const photo = await Photo.findOne({ _id: req.params.id });
+  let deletedImage = __dirname + '/public' + photo.image;
+  fs.unlinkSync(deletedImage);
+  await Photo.findByIdAndRemove(req.params.id);
+  res.redirect('/');
 });
 const port = 3000;
 app.listen(port, () => {
