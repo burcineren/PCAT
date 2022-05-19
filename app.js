@@ -7,6 +7,8 @@ const ejs = require('ejs');
 const path = require('path');
 const fs = require('fs');
 const Photo = require('./models/Photo');
+const photoController = require('./controllers/photoControllers');
+const pageController = require('./controllers/pageController');
 
 const app = express();
 
@@ -43,86 +45,23 @@ app.use(
 // app.use(myLogger2);
 
 //ROUTES
-app.get('/', async (req, res) => {
-  //   const photo = {
-  //       id: 5,
-  //       name: "Photo Name",
-  //       description: "Photo description",
-  //   }
-  // res.send(photo);
-  // res.sendFile(path.resolve(__dirname, 'temp/index.html'))
+app.get('/',  photoController.getAllPhotos);
+app.get('/photos/:id', photoController.getPhoto);
+app.post('/photos', photoController.createPhoto);
+app.put('/photos/:id', photoController.createPhoto);
 
-  const photos = await Photo.find({}).sort('-dateCreated'); //veritabanindaki fotograflari goruntulemek icin (burada fotograflari yakalayip)
-  res.render('index', {
-    photos, //fotograflari burada gonderiyoruz
-  });
-});
-app.get('/photos/:id', async (req, res) => {
-  //console.log(req.params.id);//parametre olarak gonderilen id yi yakaladik
-  //res.render('about')
-  const photo = await Photo.findById(req.params.id); // findById secili olan id ye gore fotograf bilgileri aldik
-  res.render('photo', {
-    photo,
-  });
-});
-app.get('/about', (req, res) => {
-  res.render('about');
-});
-app.get('/add', (req, res) => {
-  res.render('add');
-});
+app.delete('/photos/:id', photoController.deletePhoto);
+
+app.get('/about', pageController.getAboutPage);
+app.get('/add', pageController.getAddPage);
 app.get('/video-page', (req, res) => {
   res.render('video-page');
 });
-app.post('/photos', async (req, res) => {
-  //console.log(req.files.image); //image inputun name i
-  //yonledirneyi yakalayip
-  //yapmasi gereken islem
-  // console.log(req.body); //Forma girilen verileri yazdirmak istiyoruz.
-  //await Photo.create(req.body); //Ireq.body ilgili modelimize yonlendiyoruz.
-  // res.redirect('/'); //Anasayfa yonlendiriliyor.
 
-  const uploadDir = 'public/uploads';
 
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-  }
+app.get('/photos/edit/:id', pageController.getEditPage);
 
-  let uploadeImage = req.files.image;
-  let uploadPath = __dirname + '/public/uploads/' + uploadeImage.name;
 
-  uploadeImage.mv(uploadPath, async () => {
-    await Photo.create({
-      ...req.body,
-      image: '/uploads/' + uploadeImage.name,
-    });
-    res.redirect('/');
-  });
-});
-
-app.get('/photos/edit/:id', async (req, res) => {
-  const photo = await Photo.findOne({ _id: req.params.id });
-  res.render('edit', {
-    photo,
-  });
-});
-
-app.put('/photos/:id', async (req, res) => {
-  const photo = await Photo.findOne({ _id: req.params.id });
-  photo.title = req.body.title;
-  photo.description = req.body.description;
-  photo.save();
-
-  res.redirect(`/photos/${req.params.id}`);
-});
-
-app.delete('/photos/:id', async (req, res) => {
-  const photo = await Photo.findOne({ _id: req.params.id });
-  let deletedImage = __dirname + '/public' + photo.image;
-  fs.unlinkSync(deletedImage);
-  await Photo.findByIdAndRemove(req.params.id);
-  res.redirect('/');
-});
 const port = 3000;
 app.listen(port, () => {
   console.log(`Sunucu ${port} portuna baglandi`);
