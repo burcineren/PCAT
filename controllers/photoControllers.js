@@ -2,6 +2,23 @@ const Photo = require('../models/Photo');
 const fs = require('fs');
 
 exports.getAllPhotos = async (req, res) => {
+  
+  const page = req.query.page || 1;
+  const photoPerPage = 2;
+
+  const totalPhotos = await Photo.find().countDocuments();
+  console.log(totalPhotos);
+  const photos = await Photo.find({})
+  .sort('-dateCreated') //veritabanindaki fotograflari goruntulemek icin (burada fotograflari yakalayip)
+  .skip((page-1) * photoPerPage) // hangi sayfanın listelenceği 
+  .limit(photoPerPage);//her sayfada kaç tane göstermesini istiyorsak 
+
+  res.render('index', {
+    photos: photos, //fotograflari burada gonderiyoruz fotograflar bilgisi
+    current: page, //o anki sayfa
+    pages: Math.ceil(totalPhotos / photoPerPage) //toplam sayfa sayısı
+  });
+
   //   const photo = {
   //       id: 5,
   //       name: "Photo Name",
@@ -10,10 +27,10 @@ exports.getAllPhotos = async (req, res) => {
   // res.send(photo);
   // res.sendFile(path.resolve(__dirname, 'temp/index.html'))
 
-  const photos = await Photo.find({}).sort('-dateCreated'); //veritabanindaki fotograflari goruntulemek icin (burada fotograflari yakalayip)
-  res.render('index', {
-    photos, //fotograflari burada gonderiyoruz
-  });
+  // const photos = await Photo.find({}).sort('-dateCreated'); //veritabanindaki fotograflari goruntulemek icin (burada fotograflari yakalayip)
+  // res.render('index', {
+  //   photos, //fotograflari burada gonderiyoruz
+  // });
 };
 
 exports.getPhoto = async (req, res) => {
